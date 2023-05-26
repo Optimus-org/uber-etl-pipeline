@@ -4,6 +4,10 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
+import java.time.LocalDate;
+
+import java.time.format.DateTimeFormatter;
+
 import transform.dim.*;
 import uber.processing.constant.UberConstant;
 
@@ -13,7 +17,6 @@ public class Processing  {
     public Processing(Dataset<Row> inputDataframe, SparkSession spark){
         this.inputDataframe = inputDataframe;
         this.spark =spark;
-
     }
     public void process() {
 
@@ -44,9 +47,17 @@ public class Processing  {
         System.out.println("Test  ici"+mergeData.count());
         mergeData.printSchema();
         // Save
-        mergeData.write().save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDfS_FACT_TABLE+"/partition={}", DateTime.now()));
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate currentDate = LocalDate.now();
+        
+        String dateTime = currentDate.format(formatter);
+        mergeData.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_FACT_TABLE+"/partition=%s", dateTime));
+        datetimeDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_DATETIME_DIM+"/partition=%s", dateTime));
+        pickupLocationDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_PICKUPLOCATION_DIM+"/partition=%s", dateTime));
+        dropOffLocationDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_DROPOFFLOCATION_DIM+"/partition=%s", dateTime));
+        rateCodeDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_RATECODE_DIM+"/partition=%s", dateTime));
+        tripDistanceDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_TRIPDISTANCE_DIM+"/partition=%s", dateTime));
+        rateTripDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_RATECODE_DIM+"/partition=%s", dateTime));
+        paymentTypeDim.write().mode("overwrite").save(String.format(UberConstant.HDFS_UBER_PATH+"/"+UberConstant.HDFS_PAYMENTTYPE_DIM+"/partition=%s", dateTime));
     }
-
-
 }

@@ -21,8 +21,8 @@ public class GenerateTimeDim extends  Transformation{
                 .withColumn("drop_year", month(col("tpep_dropoff_datetime")))
                 .withColumn("drop_weekday", month(col("tpep_dropoff_datetime")))
                 .withColumn("datetime_id", col("trip_id"))
-                .select("datetime_id","tpep_pickup_datetime","tpep_pickup_datetime", "pick_hour",  "pick_day", "pick_month", "pick_year", "pick_weekday", "drop_hour"
-                , "drop_day",  "drop_day", "drop_month", "drop_year", "drop_weekday");
+                .select("datetime_id","tpep_pickup_datetime", "pick_hour",  "pick_day", "pick_month", "pick_year", "pick_weekday", "drop_hour"
+                ,"drop_day", "drop_month", "drop_year", "drop_weekday");
                 ;
 
         return datetimeDim;
