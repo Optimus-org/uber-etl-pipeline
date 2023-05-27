@@ -3,6 +3,7 @@ import org.apache.spark.sql.types.*;
 import org.junit.*;
 import static org.apache.spark.sql.functions.*;
 import static org.junit.Assert.*;
+import java.util.Arrays;
 
 public class ProcessingTest {
 
@@ -53,8 +54,9 @@ public class ProcessingTest {
         Dataset<Row> expectedDF = spark.createDataFrame(Arrays.asList(expectedRows), schema.add("last_name", DataTypes.StringType, true));
 
         // Perform the merge operation
-        Dataset<Row> mergedDF = df1.join(df2, "id", "outer")
-                .select(df1.col("id"), df1.col("name"), df2.col("name").alias("last_name"));
+        Dataset<Row> mergedDF = df1.join(df2, df1.col("id").equalTo(df2.col("id")), "outer")
+                .select(df1.col("id"), df1.col("name"), df2.col("name").alias("last_name"))
+                .na().fill("null"); // Fill null values with "null" string
 
         // Compare the actual merged DataFrame with the expected DataFrame
         assertEquals(expectedDF.collectAsList(), mergedDF.collectAsList());
