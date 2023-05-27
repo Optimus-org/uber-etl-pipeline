@@ -1,1 +1,3 @@
 Error: Failed to load class uber.processing.DataLoader., you need yo make sure you're using the good jar  and provide good class pass including package
+spark.history.fs.cleaner.maxAge =1d 
+spark.history.fs.cleaner.interval=1h 
